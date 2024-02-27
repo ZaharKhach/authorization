@@ -1,14 +1,14 @@
-const Router = require('express');
-const authController = require("./authController");
-const { check } = require('express-validator');
-
-const router = new Router();
+const Router = require('express')
+const router = new Router()
+const controller = require('./authController')
+const { check } = require("express-validator")
+const roleMiddleware = require('./middleware/roleMiddleware')
 
 router.post('/registration', [
-    check('username', "Name cannot be empty").notEmpty(),
-    check('password', "Password must have more than 5 symbols").isLength({ min: 5, max: 10 })
-], authController.registration);
-router.post('/login', authController.login);
-router.get('/users', authController.getUsers);
+    check('username', "Имя пользователя не может быть пустым").notEmpty(),
+    check('password', "Пароль должен быть больше 4 и меньше 10 символов").isLength({ min: 4, max: 10 })
+], controller.registration)
+router.post('/login', controller.login)
+router.get('/users', roleMiddleware(["ADMIN"]), controller.getUsers)
 
-module.exports = router;
+module.exports = router
